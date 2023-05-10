@@ -1,0 +1,282 @@
+
+Sub cadence()
+    Dim wb1 As Workbook
+    Dim wb2 As Workbook
+    Dim jt As Worksheet
+    Dim ft As Worksheet
+    Dim et As Worksheet
+    Dim ns As Worksheet
+    
+    Set wb1 = ThisWorkbook
+    Set wb2 = Workbooks.Open("L:\Temp_Gel_Cadence\New_workbook.xlsx")
+    Set jt = wb1.Sheets("Jobs_Table")
+    Set ft = wb1.Sheets("Flaw_Table")
+    Set et = wb1.Sheets("Event_Table")
+    Set ns = wb2.Sheets(1)
+    
+   ' MsgBox jt.UsedRange.Rows.Count'
+    Dim jt_row As Long
+    jt_row = jt.UsedRange.Rows.Count
+    ft_row = ft.UsedRange.Rows.Count
+    et_row = et.UsedRange.Rows.Count
+
+    
+    ns.Cells(1, "A").Value = "Winder"
+    ns.Cells(1, "B").Value = "A/B"
+    ns.Cells(1, "C").Value = "WO#"
+    ns.Cells(1, "D").Value = "Item #"
+    ns.Cells(1, "K").Value = "End Date"
+    ns.Cells(1, "L").Value = "End Time"
+    ns.Cells(1, "M").Value = "B"
+    ns.Cells(1, "N").Value = "C"
+    ns.Cells(1, "O").Value = "D"
+    ns.Cells(1, "P").Value = "E"
+    ns.Cells(1, "Q").Value = "F"
+    ns.Cells(1, "R").Value = "G"
+    ns.Cells(1, "S").Value = "H"
+    ns.Cells(1, "T").Value = "I"
+    ns.Cells(1, "U").Value = "J"
+    ns.Cells(1, "V").Value = "K"
+    ns.Cells(1, "W").Value = "Total Count B/C/D,etc"
+    
+    ns.Cells(1, "X").Value = "B"
+    ns.Cells(1, "Y").Value = "C"
+    ns.Cells(1, "Z").Value = "D"
+    ns.Cells(1, "AA").Value = "E"
+    ns.Cells(1, "AB").Value = "F"
+    ns.Cells(1, "AC").Value = "G"
+    ns.Cells(1, "AD").Value = "H"
+    ns.Cells(1, "AE").Value = "I"
+    ns.Cells(1, "AF").Value = "J"
+    ns.Cells(1, "AG").Value = "K"
+    ns.Cells(1, "AH").Value = "Total Count per ft"
+    
+    ns.Cells(1, "AI").Value = "Total Ft"
+    ns.Cells(1, "AJ").Value = "Recipe"
+    ns.Cells(1, "AK").Value = "JP/JF"
+    ns.Cells(1, "AL").Value = "Comments"
+    
+    Dim jlength As Single
+    Dim dttm As String
+    Dim pos As Integer
+    Dim enddate As Date
+    Dim endtime As Double
+    Dim webwidth As Single
+    Dim job_area As Single
+    Dim jkey As Integer
+    
+    Dim defect_b As Long
+    defect_b = 0
+    Dim defect_c As Long
+    defect_c = 0
+    Dim defect_d As Long
+    defect_d = 0
+    Dim defect_e As Long
+    defect_e = 0
+    Dim defect_f As Long
+    defect_f = 0
+    Dim defect_g As Long
+    defect_g = 0
+    Dim defect_h As Long
+    defect_h = 0
+    Dim defect_i As Long
+    defect_i = 0
+    Dim defect_j As Long
+    defect_j = 0
+    Dim defect_k As Long
+    defect_k = 0
+    Dim defect_total As Long
+    defect_total = 0
+    
+   'CG3 code
+    Dim str As String 'the string that contains the tags
+    Dim startTag As String 'the start tag
+    Dim endTag As String 'the end tag
+    Dim startPos As Long 'the position of the start tag
+    Dim endPos As Long 'the position of the end tag
+    Dim result As String 'the extracted string
+    startTag = "<ProductName>" 'change this to the start tag you want
+    endTag = "</ProductName>" 'change this to the end tag you want
+    
+    Dim cell As Range 'the cell that contains the job status
+    Dim status As String 'the variable to store the job status
+    Dim reason As String 'the variable to store the job failure reason
+    status = "" 'initialize the status variable
+    reason = "" 'initialize the reason variable
+    'CG3 Code
+    
+    Dim myarray(300) As String
+    Dim temp_2 As Long
+    temp_2 = 2
+    
+    
+    For l = 1 To et_row
+        If InStr(et.Cells(l, "A").Value, "Job Passed") > 0 Then 'if the cell contains "Job Passed"
+                myarray(temp_2) = et.Cells(l, "A").Value 'set the status variable to "JP"
+                temp_2 = temp_2 + 1
+                    
+        ElseIf InStr(et.Cells(l, "A").Value, "Job Failed") > 0 Then 'if the cell contains "Job Failed"
+                myarray(temp_2) = et.Cells(l, "A").Value 'set the status variable to "JP"
+                temp_2 = temp_2 + 1
+        End If
+    Next l
+    
+  
+    'Const temp4 As Integer = jt_row
+    
+
+    Dim anarray(3000, 11) As Variant
+    Dim anothert As Integer
+    anothert = 0
+   Dim temp3 As Integer
+   temp3 = 0
+
+      For Z = 2 To jt_row
+      anarray(Z - 2, 0) = Int(jt.Cells(Z, "A"))
+      Next Z
+
+
+ 
+            For j = 2 To ft_row
+
+               anothert = Int(ft.Cells(j, "A"))
+               If anarray(temp3, 0) <> anothert Then
+                  temp3 = temp3 + 1
+               End If
+
+                If ft.Cells(j, "I") = "Gel  <.15" Or ft.Cells(j, "I") = "Gel <.15" Or ft.Cells(j, "I") = "Gel_<.15" Or ft.Cells(j, "I") = "Gel_<.15" Or ft.Cells(j, "I") = "Gels_<.15" Then
+                   
+                   anarray(temp3, 1) = anarray(temp3, 1) + 1
+                End If
+                If ft.Cells(j, "I") = "Gel .15-.6" Or ft.Cells(j, "I") = "Gel_.15-.6" Or ft.Cells(j, "I") = "Gel -0.15-.6" Or ft.Cells(j, "I") = "Gels_.15-.6" Then
+                   anarray(temp3, 2) = anarray(temp3, 2) + 1
+                End If
+                If ft.Cells(j, "I") = "Gel .6-1.5" Or ft.Cells(j, "I") = "Gel -0.6-1.5" Or ft.Cells(j, "I") = "Gel_.6-1.5" Or ft.Cells(j, "I") = "Gel  -0.6-1.5" Or ft.Cells(j, "I") = "Gels_.6-1.5" Then
+                   anarray(temp3, 3) = anarray(temp3, 3) + 1
+                End If
+                If ft.Cells(j, "I") = "Gel  1.5-2.5" Or ft.Cells(j, "I") = "Gels_1.5-2.5" Or ft.Cells(j, "I") = "Gel_1.5-2.5" Or ft.Cells(j, "I") = "Gel -1.5-2.5" Or ft.Cells(j, "I") = "Gel 1.5-2.5" Then
+                   anarray(temp3, 4) = anarray(temp3, 4) + 1
+                End If
+                If ft.Cells(j, "I") = "Gel 2.5-4" Or ft.Cells(j, "I") = "Gel_>2.5-4" Or ft.Cells(j, "I") = "Gels_2.5-4.0"  Or ft.Cells(j, "I") = "Gel_2.5-4" Or ft.Cells(j, "I") = "Gel >2.5-4" Or ft.Cells(j, "I") = "Gel -2.5-4" Then
+                   anarray(temp3, 5) = anarray(temp3, 5) + 1
+                End If
+                If ft.Cells(j, "I") = "Large Defects" Or ft.Cells(j, "I") = "Lines or 0ther" Or ft.Cells(j, "I") = "Large Defect/Gel" Or ft.Cells(j, "I") = "Lines or other" Or ft.Cells(j, "I") = "Lines or Other" Or ft.Cells(j, "I") = "Line or other" Or ft.Cells(j, "I") = "Line or Other" Then
+                   anarray(temp3, 6) = anarray(temp3, 6) + 1
+                End If
+                If ft.Cells(j, "I") = "Line/Treater" Or ft.Cells(j, "I") = "Short Line / Treater" Then
+                   anarray(temp3, 7) = anarray(temp3, 7) + 1
+                End If
+                If ft.Cells(j, "I") = "Bright" Or ft.Cells(j, "I") = "Brights" Then
+                   anarray(temp3, 8) = anarray(temp3, 8) + 1
+                End If
+                If ft.Cells(j, "I") = "Carbon/PA" Then
+                   anarray(temp3, 9) = anarray(temp3, 9) + 1
+                End If
+                If ft.Cells(j, "I") = "Long Line / Treater" Or ft.Cells(j, "I") = "Not Classified" Then
+                   anarray(temp3, 10) = anarray(temp3, 10) + 1
+                End If
+
+                'defect_b = anarray(j-2,1)
+
+            Next j
+
+
+    Dim temp As Long
+    temp = 1
+    For I = 2 To jt_row
+        jlength = jt.Cells(I, "L") * 3.28084
+        jlength_temp = Application.WorksheetFunction.Round(jt.Cells(I, "L"), 5) * 3.28084
+
+         anarray(I, 0) = jt.Cells(I, "A")
+
+
+        If jlength > 6561.68 Then
+            temp = temp + 1
+            ns.Cells(temp, "AI").Value = Application.WorksheetFunction.Round(jlength_temp, 2)
+            ns.Cells(temp, "C").Value = Int(jt.Cells(I, "F"))
+            ns.Cells(temp, "D").Value = Int(jt.Cells(I, "G"))
+            dttm = jt.Cells(I, "T")
+            pos = InStr(dttm, "2023")
+            enddate = CDate(Left(dttm, pos + 3))
+            endtime = TimeValue(Right(dttm, Len(dttm) - pos - 4))
+            ns.Cells(temp, "K").Value = Format(enddate, "mm/dd/yyyy")
+            ns.Cells(temp, "L").Value = Format(endtime, "hh:mm:ss")
+            webwidth = (CSng(jt.Cells(I, "O")) - CSng(jt.Cells(I, "N"))) * 3.28084
+            job_area = webwidth * jlength
+            'ns.Cells(temp, "AJ").Value = job_area
+            jkey = jt.Cells(I, "A")
+            
+            str = jt.Cells(I, "S").Value 'change A1 to the cell reference that contains the tags
+            startPos = InStr(str, startTag) 'find the position of the start tag
+            If startPos > 0 Then 'if the start tag is found
+                endPos = InStr(startPos + Len(startTag), str, endTag) 'find the position of the end tag after the start tag
+                If endPos > 0 Then 'if the end tag is found
+                    result = Mid(str, startPos + Len(startTag), endPos - startPos - Len(startTag))
+                End If
+            End If
+            ns.Cells(temp, "AJ").Value = result
+            
+            If InStr(myarray(I), "Job Passed") > 0 Then 'if the cell contains "Job Passed"
+                ns.Cells(temp, "AK").Value = "JP" 'set the status variable to "JP"
+                    
+            ElseIf InStr(myarray(I), "Job Failed") > 0 Then 'if the cell contains "Job Failed"
+                ns.Cells(temp, "AK").Value = "JF" 'set the status variable to "JF"
+                ns.Cells(temp, "AL").Value = Mid(myarray(I), InStr(myarray(I), "-") + 1) 'set the reason variable to everything after "-"
+            End If
+
+            defect_b = Int(anarray(I - 2, 1))
+            defect_c = Int(anarray(I - 2, 2))
+            defect_d = Int(anarray(I - 2, 3))
+            defect_e = Int(anarray(I - 2, 4))
+            defect_f = Int(anarray(I - 2, 5))
+            defect_g = Int(anarray(I - 2, 6))
+            defect_h = Int(anarray(I - 2, 7))
+            defect_i = Int(anarray(I - 2, 8))
+            defect_j = Int(anarray(I - 2, 9))
+            defect_k = Int(anarray(I - 2, 10))
+           
+
+
+            
+            ns.Cells(temp, "M").Value = defect_b
+            ns.Cells(temp, "X").Value = WorksheetFunction.Round(defect_b / job_area, 6)
+            
+            ns.Cells(temp, "N").Value = defect_c
+            ns.Cells(temp, "Y").Value = WorksheetFunction.Round(defect_c / job_area, 6)
+            
+            ns.Cells(temp, "O").Value = defect_d
+            ns.Cells(temp, "Z").Value = WorksheetFunction.Round(defect_d / job_area, 6)
+            
+            ns.Cells(temp, "P").Value = defect_e
+            ns.Cells(temp, "AA").Value = WorksheetFunction.Round(defect_e / job_area, 6)
+            
+            ns.Cells(temp, "Q").Value = defect_f
+            ns.Cells(temp, "AB").Value = WorksheetFunction.Round(defect_f / job_area, 6)
+            
+            ns.Cells(temp, "R").Value = defect_g
+            ns.Cells(temp, "AC").Value = WorksheetFunction.Round(defect_g / job_area, 6)
+            
+            ns.Cells(temp, "S").Value = defect_h
+            ns.Cells(temp, "AD").Value = WorksheetFunction.Round(defect_h / job_area, 6)
+            
+            ns.Cells(temp, "T").Value = defect_i
+            ns.Cells(temp, "AE").Value = WorksheetFunction.Round(defect_i / job_area, 6)
+            
+            ns.Cells(temp, "U").Value = defect_j
+            ns.Cells(temp, "AF").Value = WorksheetFunction.Round(defect_j / job_area, 6)
+            
+            ns.Cells(temp, "V").Value = defect_k
+            ns.Cells(temp, "AG").Value = WorksheetFunction.Round(defect_k / job_area, 6)
+            
+            defect_total = defect_b + defect_c + defect_d + defect_e + defect_f + defect_g + defect_h + defect_i + defect_j + defect_k
+            ns.Cells(temp, "W").Value = defect_total
+            ns.Cells(temp, "AH").Value = WorksheetFunction.Round(defect_total / job_area, 6)
+            
+         
+        End If
+    Next I
+        
+    
+End Sub
+
+
